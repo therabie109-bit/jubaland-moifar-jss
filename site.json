@@ -1,0 +1,188 @@
+{
+ "C": {
+  "email": "info@moifar-jss.so",
+  "phone": "+252 615 390 580",
+  "addr": "Kismayo, Jubaland State of Somalia",
+  "hrs": "Sat – Thu 8:00 – 16:30, Fri closed"
+ },
+ "txt": {
+  "notice": "The ministry website is regularly updated. Please check back for the latest improvements.",
+  "mission": "Build a secure, united Jubaland through effective governance and reconciliation.",
+  "vision": "A peaceful state with transparent institutions serving every citizen.",
+  "mandate": "The Ministry of Interior, Federal Affairs and Reconciliation of Jubaland State coordinates internal administration, peacebuilding and reconciliation, electoral processes and the registration of NGOs operating in the state. It works with district administrations, community leaders and development partners."
+ },
+ "people": [
+  {
+   "role": "Minister",
+   "name": "Mohamed I. Ogle",
+   "photo": ""
+  },
+  {
+   "role": "Deputy Minister",
+   "name": "[Name]",
+   "photo": ""
+  },
+  {
+   "role": "Director General",
+   "name": "Abdiwahid Dakane",
+   "photo": ""
+  }
+ ],
+ "org": {
+  "comm": [
+   "National Identification & Registration Authority (NIRA)",
+   "Refugees & IDPs Commission (JUCRI)",
+   "Boundaries & Electoral Commission (JIBEC)",
+   "Local Government Institute Commission"
+  ],
+  "depts": [
+   {
+    "name": "Admin, Finance & HR",
+    "officers": [
+     "Human Resource Officer",
+     "Procurement & Asset Management Officer",
+     "Administration Officer",
+     "Training & Supervision Officer",
+     "Finance & Accounts Officer"
+    ]
+   },
+   {
+    "name": "Communications, Media & Archives",
+    "officers": [
+     "Communications & Media Officer",
+     "Archives Officer",
+     "IT Officer"
+    ]
+   },
+   {
+    "name": "Social Affairs & Civic Registration",
+    "officers": [
+     "Social Affairs Officer",
+     "Civic Registration & Demographics Officer",
+     "Traditional Elders Registration Officer"
+    ]
+   },
+   {
+    "name": "Planning, Policy & M&E",
+    "officers": [
+     "Planning Officer",
+     "Policy Officer",
+     "Monitoring & Evaluation Officer"
+    ]
+   },
+   {
+    "name": "Reconciliation",
+    "officers": [
+     "Reconciliation Officer",
+     "Conflict Prevention & Management Officer",
+     "Conflict Management Institute Officer"
+    ]
+   },
+   {
+    "name": "Sustainable Solutions",
+    "officers": [
+     "IDPs / Returnees / Refugees Resettlement Officer",
+     "Sustainable Solutions Officer",
+     "Economic Resilience Support Officer",
+     "Refugees Officer"
+    ]
+   },
+   {
+    "name": "Local Govt, Federal Affairs, Democratization & Rural",
+    "officers": [
+     "Rural Development Officer",
+     "Local Government Officer",
+     "Democratization Officer"
+    ]
+   },
+   {
+    "name": "Stabilization",
+    "officers": [
+     "Community Awareness Officer",
+     "Research Officer"
+    ]
+   }
+  ]
+ },
+ "lists": {
+  "news": [
+   {
+    "title": "Ministry reviews 2026 work plan with district partners",
+    "date": "Oct 2026",
+    "text": "The ministry convened district administration partners to review progress on its 2026 work plan and agree priorities for the coming quarter."
+   },
+   {
+    "title": "Reconciliation dialogue held between communities",
+    "date": "Sep 2026",
+    "text": "Community elders and local leaders took part in a dialogue aimed at strengthening peace and cooperation across the state."
+   },
+   {
+    "title": "NGO registration portal now open online",
+    "date": "Aug 2026",
+    "text": "Organizations can now submit registration and renewal requests through the E-MOIFAR page."
+   }
+  ],
+  "constitution": [
+   {
+    "title": "Jubaland State Constitution",
+    "date": "Document",
+    "text": ""
+   }
+  ],
+  "bills": [
+   {
+    "title": "Sample Bill 1",
+    "date": "Draft",
+    "text": ""
+   },
+   {
+    "title": "Sample Bill 2",
+    "date": "Enacted",
+    "text": ""
+   }
+  ],
+  "policies": [
+   {
+    "title": "NGO Registration Guidelines",
+    "date": "Policy",
+    "text": ""
+   },
+   {
+    "title": "Reconciliation Framework",
+    "date": "Policy",
+    "text": ""
+   }
+  ],
+  "press": [
+   {
+    "title": "Statement on reconciliation efforts",
+    "date": "Oct 2026",
+    "text": ""
+   },
+   {
+    "title": "Announcement: NGO registration portal",
+    "date": "Aug 2026",
+    "text": ""
+   }
+  ],
+  "pub": [
+   {
+    "title": "Annual Report 2025",
+    "date": "Report",
+    "text": ""
+   },
+   {
+    "title": "Reconciliation Strategy",
+    "date": "Strategy",
+    "text": ""
+   },
+   {
+    "title": "NGO Directory",
+    "date": "Directory",
+    "text": ""
+   }
+  ],
+  "photos": [],
+  "jobs": []
+ }
+}

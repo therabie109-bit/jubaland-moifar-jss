@@ -1,0 +1,35 @@
+backend:
+  name: github
+  repo: YOUR-GITHUB-USERNAME/jubaland-moifar   # change this
+  branch: main
+media_folder: uploads
+public_folder: /uploads
+collections:
+  - name: site
+    label: Website content
+    files:
+      - name: site
+        label: All website content
+        file: data/site.json
+        fields:
+          - {label: Contact details, name: C, widget: object, fields: [{label: Email, name: email, widget: string, required: false}, {label: Phone, name: phone, widget: string, required: false}, {label: Address, name: addr, widget: string, required: false}, {label: Office hours, name: hrs, widget: string, required: false}]}
+          - {label: Site text, name: txt, widget: object, fields: [{label: Website notice, name: notice, widget: text, required: false}, {label: Mission, name: mission, widget: text, required: false}, {label: Vision, name: vision, widget: text, required: false}, {label: Mandate (About page), name: mandate, widget: text, required: false}]}
+          - {label: Leadership, name: people, widget: list, summary: '{{fields.name}} - {{fields.role}}', fields: [{label: Name, name: name, widget: string, required: true}, {label: Title / role, name: role, widget: string, required: true}, {label: Photo, name: photo, widget: image, required: false}]}
+          - label: Commissions and departments
+            name: org
+            widget: object
+            fields:
+              - {label: Commissions, name: comm, widget: list, field: {label: Name, name: name, widget: string}}
+              - {label: Departments, name: depts, widget: list, summary: '{{fields.name}}', fields: [{label: Name, name: name, widget: string, required: true}, {label: Officers, name: officers, widget: list, field: {label: Officer, name: o, widget: string}}]}
+          - label: Pages content
+            name: lists
+            widget: object
+            fields:
+      - {label: News, name: news, widget: list, summary: '{{fields.title}}', fields: [{label: Title, name: title, widget: string, required: true}, {label: Date / status / closing date, name: date, widget: string, required: false}, {label: Description, name: text, widget: text, required: false}, {label: Image, name: img, widget: image, required: false}, {label: Document (PDF, Word, Excel), name: file, widget: file, required: false}]}
+      - {label: Photos (image required), name: photos, widget: list, summary: '{{fields.title}}', fields: [{label: Title, name: title, widget: string, required: true}, {label: Date / status / closing date, name: date, widget: string, required: false}, {label: Description, name: text, widget: text, required: false}, {label: Image, name: img, widget: image, required: false}]}
+      - {label: Press Releases, name: press, widget: list, summary: '{{fields.title}}', fields: [{label: Title, name: title, widget: string, required: true}, {label: Date / status / closing date, name: date, widget: string, required: false}, {label: Description, name: text, widget: text, required: false}, {label: Document (PDF, Word, Excel), name: file, widget: file, required: false}]}
+      - {label: Publications, name: pub, widget: list, summary: '{{fields.title}}', fields: [{label: Title, name: title, widget: string, required: true}, {label: Date / status / closing date, name: date, widget: string, required: false}, {label: Description, name: text, widget: text, required: false}, {label: Document (PDF, Word, Excel), name: file, widget: file, required: false}]}
+      - {label: Jobs, name: jobs, widget: list, summary: '{{fields.title}}', fields: [{label: Title, name: title, widget: string, required: true}, {label: Date / status / closing date, name: date, widget: string, required: false}, {label: Description, name: text, widget: text, required: false}, {label: Document (PDF, Word, Excel), name: file, widget: file, required: false}]}
+      - {label: Bills, name: bills, widget: list, summary: '{{fields.title}}', fields: [{label: Title, name: title, widget: string, required: true}, {label: Date / status / closing date, name: date, widget: string, required: false}, {label: Description, name: text, widget: text, required: false}, {label: Document (PDF, Word, Excel), name: file, widget: file, required: false}]}
+      - {label: Policies, name: policies, widget: list, summary: '{{fields.title}}', fields: [{label: Title, name: title, widget: string, required: true}, {label: Date / status / closing date, name: date, widget: string, required: false}, {label: Description, name: text, widget: text, required: false}, {label: Document (PDF, Word, Excel), name: file, widget: file, required: false}]}
+      - {label: Constitution, name: constitution, widget: list, summary: '{{fields.title}}', fields: [{label: Title, name: title, widget: string, required: true}, {label: Date / status / closing date, name: date, widget: string, required: false}, {label: Description, name: text, widget: text, required: false}, {label: Document (PDF, Word, Excel), name: file, widget: file, required: false}]}
