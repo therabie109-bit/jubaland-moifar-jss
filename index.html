@@ -48,7 +48,7 @@ details{background:var(--card);border:1px solid var(--ln);margin-bottom:10px;pad
 .meta{font-size:13px;color:var(--mut)}.row{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--ln);padding:16px 20px;margin-bottom:10px}
 .ph{aspect-ratio:4/3;display:grid;place-items:center;color:#fff;font-weight:700;text-align:center;padding:12px;cursor:pointer}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tabs button{padding:8px 16px;border:1px solid var(--blue);background:none;color:var(--blue);cursor:pointer;border-radius:20px;font:inherit}.tabs .a{background:var(--blue);color:#fff}
-.av{width:130px;height:130px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;background:#e3eefa;text-align:center;line-height:130px;font-size:56px}.ul{padding-left:18px;margin:8px 0 0;color:var(--mut)}
+.av{width:130px;height:130px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;background:#e3eefa;text-align:center;line-height:130px;font-size:56px}.av.pf{width:170px;height:210px;border-radius:12px;line-height:normal}.ul{padding-left:18px;margin:8px 0 0;color:var(--mut)}
 #lb{position:fixed;inset:0;background:#000c;display:none;place-items:center;z-index:50;padding:20px}#lb div{max-width:640px;width:100%;color:#fff;text-align:center}#lb .ph{cursor:default}
 footer{background:var(--blue);color:#fff;padding:0 24px 18px;text-align:center}
 footer .fl{display:flex;align-items:center;gap:16px;padding-top:30px}footer .fl i{flex:1;height:1px;background:#ffffff55}footer .fl img{width:84px;height:84px;border-radius:50%}
@@ -118,7 +118,7 @@ const ORG=S.org||(S.org={comm:["National Identification & Registration Authority
 ["Stabilization",["Community Awareness Officer","Research Officer"]]]});
 ORG.depts=ORG.depts.map(d=>Array.isArray(d)?d:[d.name,d.officers||[]]);let EDIT=false,TMP={};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const av=p=>p.photo?`<img class="av" src="${p.photo}" alt="${esc(p.name)}">`:`<div class="av">👤</div>`;
+const av=p=>p.photo?`<img class="av pf" src="${esc(p.photo)}" alt="${esc(p.name)}" style="object-position:${esc(p.pos||"50% 15%")}">`:`<div class="av">👤</div>`;
 const bx=(h,s)=>`<div class="card" style="width:min(340px,100%);text-align:center"><h3>${h}</h3>${s?`<p>${s}</p>`:""}</div>`;
 const dc=d=>`<div class="card"><h3>${d[0]}</h3><ul class="ul">${d[1].map(o=>`<li>${o}</li>`).join("")}</ul></div>`;
 Object.assign(P,{
