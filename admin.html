@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Admin – Jubaland MoIFAR</title>
+<style>*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f4f7fb;color:#1d2b3a}header{background:#0e5a9c;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}main{max-width:900px;margin:0 auto;padding:20px}
+.box{background:#fff;border:1px solid #dde5ee;border-top:4px solid #0e5a9c;padding:20px;margin-bottom:20px}input,textarea,select{width:100%;padding:10px;border:1px solid #c9d5e2;border-radius:3px;font:inherit;margin:4px 0 12px}
+button{background:#0e5a9c;color:#fff;border:0;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;border-radius:3px}button.o{background:#fff;color:#0e5a9c;border:1px solid #0e5a9c}button.d{background:#b42318}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}.tabs button{background:#fff;color:#0e5a9c;border:1px solid #0e5a9c}.tabs .a{background:#0e5a9c;color:#fff}
+.it{display:flex;gap:12px;align-items:center;border-bottom:1px solid #eef2f6;padding:10px 0;flex-wrap:wrap}.it img{width:64px;height:48px;object-fit:cover}.it div{flex:1;min-width:160px}small{color:#5d6b7a}#msg{color:#14532d;font-weight:600}.err{color:#b42318}</style></head><body>
+<header><b>Jubaland MoIFAR – Admin</b><span><a href="index.html" style="color:#fff;margin-right:14px">View website</a><button id="out" class="o" style="display:none">Sign out</button></span></header>
+<main><div id="login" class="box" style="display:none;max-width:420px;margin:40px auto"><h2>Admin login</h2><form id="lf"><label>Email<input id="em" type="email" required></label><label>Password<input id="pw" type="password" required></label><button>Sign in</button><p id="le" class="err"></p></form></div>
+<div id="app" style="display:none"><div class="tabs" id="tabs"></div><div class="box"><h3 id="ft">Add new</h3><form id="f"><label>Title / name *<input id="t" required></label><label>Date, status or closing date<input id="d" placeholder="e.g. 5 Nov 2026"></label><label id="bl">Description<textarea id="b" rows="4"></textarea></label><label>Social media or web link (Facebook, YouTube, X, TikTok, Instagram…)<input id="l" type="url" placeholder="https://"></label><label>Order (small number shows first; leave 0 for newest first)<input id="s" type="number" value="0"></label><label>Image<input id="i" type="file" accept="image/*"></label><label id="rim" style="display:none"><input id="ri" type="checkbox" style="width:auto"> Remove current image</label><label>Document (PDF, Word, Excel…)<input id="fl" type="file"></label><label id="rfl" style="display:none"><input id="rf" type="checkbox" style="width:auto"> Remove current document</label><button id="sv">Save</button> <button type="button" class="o" id="cn" style="display:none">Cancel edit</button><p id="msg"></p></form></div>
+<div class="box"><h3 id="lt">Items</h3><div id="list"></div></div></div></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script><script src="config.js"></script>
+<script>
+const K=window.CMS||{},$=id=>document.getElementById(id),esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+if(!K.url||!K.key){document.querySelector("main").innerHTML="<p class='err'>config.js is not filled in yet.</p>";throw new Error("no config")}
+const sb=supabase.createClient(K.url,K.key),SEC=[["news","News"],["activities","Activities / social media"],["photos","Photos"],["jobs","Jobs"],["press","Press releases"],["pub","Publications"],["bills","Bills"],["policies","Policies"],["constitution","Constitution"],["people","Leadership"]];
+let sec="news",ed=null,rows=[];
+const show=on=>{$("login").style.display=on?"none":"block";$("app").style.display=on?"block":"none";$("out").style.display=on?"":"none";if(on){tabs();load()}};
+sb.auth.getSession().then(r=>show(!!r.data.session));
+$("lf").onsubmit=async e=>{e.preventDefault();const r=await sb.auth.signInWithPassword({email:$("em").value,password:$("pw").value});if(r.error)$("le").textContent=r.error.message;else show(true)};
+$("out").onclick=async()=>{await sb.auth.signOut();show(false)};
+function tabs(){$("tabs").innerHTML=SEC.map(s=>`<button class="${s[0]===sec?"a":""}" onclick="pick('${s[0]}')">${s[1]}</button>`).join("")}
+function pick(s){sec=s;reset();tabs();load()}
+async function load(){const r=await sb.from("items").select("*").eq("section",sec).order("sort",{ascending:true}).order("created_at",{ascending:false});rows=r.data||[];$("lt").textContent=SEC.find(s=>s[0]===sec)[1]+" ("+rows.length+")";
+$("bl").firstChild.textContent=sec==="people"?"Role / title (e.g. Minister)":"Description";
+$("list").innerHTML=rows.length?rows.map((x,i)=>`<div class="it">${x.image_url?`<img src="${esc(x.image_url)}">`:""}<div><b>${esc(x.title)}</b><br><small>${esc(x.date_text)} ${x.file_name?"📎 "+esc(x.file_name):""} ${x.link_url?"🔗":""}</small></div><button class="o" onclick="edit(${i})">Edit</button><button class="d" onclick="del(${i})">Delete</button></div>`).join(""):"<p>Nothing here yet.</p>"}
+function reset(){ed=null;$("f").reset();$("ft").textContent="Add new";$("cn").style.display=$("rim").style.display=$("rfl").style.display="none";$("msg").textContent=""}
+$("cn").onclick=reset;
+function edit(i){const x=rows[i];ed=x;$("t").value=x.title;$("d").value=x.date_text||"";$("b").value=x.body||"";$("l").value=x.link_url||"";$("s").value=x.sort||0;$("ft").textContent="Edit item";$("cn").style.display="";$("rim").style.display=x.image_url?"":"none";$("rfl").style.display=x.file_url?"":"none";scrollTo(0,0)}
+const path=u=>u&&u.split("/object/public/uploads/")[1];
+async function up(f){const p=sec+"/"+Date.now()+"-"+f.name.replace(/[^\w.\-]+/g,"_"),r=await sb.storage.from("uploads").upload(p,f);if(r.error)throw r.error;return sb.storage.from("uploads").getPublicUrl(p).data.publicUrl}
+async function rm(u){const p=path(u);if(p)await sb.storage.from("uploads").remove([p])}
+$("f").onsubmit=async e=>{e.preventDefault();$("sv").disabled=true;$("msg").className="";$("msg").textContent="Saving…";
+try{const o={section:sec,title:$("t").value.trim(),date_text:$("d").value.trim(),body:$("b").value.trim(),link_url:$("l").value.trim(),sort:+$("s").value||0};
+let img=ed?ed.image_url:null,fu=ed?ed.file_url:null,fn=ed?ed.file_name:null;
+if($("ri").checked&&img){await rm(img);img=null}if($("rf").checked&&fu){await rm(fu);fu=fn=null}
+if($("i").files[0]){if(img)await rm(img);img=await up($("i").files[0])}
+if($("fl").files[0]){if(fu)await rm(fu);fu=await up($("fl").files[0]);fn=$("fl").files[0].name}
+o.image_url=img;o.file_url=fu;o.file_name=fn;
+const r=ed?await sb.from("items").update(o).eq("id",ed.id):await sb.from("items").insert(o);if(r.error)throw r.error;
+reset();$("msg").textContent="Saved. The website shows it now.";load()}catch(x){$("msg").className="err";$("msg").textContent="Error: "+(x.message||x)}$("sv").disabled=false};
+async function del(i){const x=rows[i];if(!confirm("Delete \""+x.title+"\"?"))return;await rm(x.image_url);await rm(x.file_url);const r=await sb.from("items").delete().eq("id",x.id);if(r.error)alert(r.error.message);load()}
+</script></body></html>

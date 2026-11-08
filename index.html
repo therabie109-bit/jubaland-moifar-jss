@@ -188,4 +188,23 @@ document.getElementById("em").textContent="✉ "+C.email;document.getElementById
 document.getElementById("fa").textContent=C.addr;document.getElementById("fp").textContent=C.phone;document.getElementById("fe").textContent=C.email;
 addEventListener("hashchange",route);route();
 window.claude&&claude.use("user").then(u=>{if(u&&u.canEdit()){EDIT=true;NAV.push(["admin","Admin"]);route()}}).catch(()=>{});
-</script></body></html>
+</script><script src="config.js"></script>
+<script>(()=>{const K=window.CMS||{};if(!K.url||!K.key)return;
+NAV.find(n=>n[0]==="media")[2].splice(1,0,["activities","Activities"]);
+LC.activities=[1,0];S.lists.activities=[];
+P.activities={t:"Activities",l:"Latest activities and posts from our social media",h:()=>lpage("activities")};
+const ln=u=>/facebook|fb\./.test(u)?"Facebook":/youtu/.test(u)?"YouTube":/instagram/.test(u)?"Instagram":/tiktok/.test(u)?"TikTok":/twitter|x\.com/.test(u)?"X":"link";
+const emb=u=>{if(!u)return"";const m=u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{11})/);
+if(m)return`<iframe src="https://www.youtube.com/embed/${m[1]}" style="width:100%;max-width:560px;aspect-ratio:16/9;border:0;margin-top:10px" allowfullscreen loading="lazy"></iframe>`;
+if(/facebook\.com|fb\.watch/.test(u))return`<iframe src="https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(u)}&width=500&show_text=true" style="width:100%;max-width:500px;height:480px;border:0;margin-top:10px" loading="lazy" allowfullscreen></iframe>`;return""};
+lpage=function(k){const L=S.lists[k]||[];let h="";
+if(k==="jobs")h+=`<p>To apply, download the vacancy document, then email your CV and cover letter to <a href="mailto:${esc(C.email)}">${esc(C.email)}</a> quoting the job title.</p>`;
+if(!L.length)return h+"<p>Nothing has been published here yet.</p>";
+if(k==="photos")return h+`<div class="grid">${L.map((it,i)=>`<div class="card" style="padding:0"><img src="${esc(it.img)}" alt="${esc(it.title)}" style="width:100%;aspect-ratio:4/3;object-fit:cover;cursor:pointer;display:block" onclick="lbI(${i})"><div style="padding:12px"><b>${esc(it.title)}</b><div class="meta">${esc(it.date||"")}</div></div></div>`).join("")}</div>`;
+return h+L.map(it=>`<div class="row" style="align-items:flex-start"><div style="display:flex;gap:16px;flex:1;flex-wrap:wrap">${it.img?`<img src="${esc(it.img)}" alt="" style="width:160px;height:110px;object-fit:cover">`:""}<div style="flex:1;min-width:220px"><b>${esc(it.title)}</b><div class="meta">${esc(it.date||"")}</div><p style="white-space:pre-line;margin:6px 0 0">${esc(it.text||"")}</p>${emb(it.link)}</div></div><div style="display:grid;gap:8px">${it.file?`<a class="btn o" href="${esc(it.file.url)}" target="_blank" rel="noopener">Download</a>`:""}${it.link?`<a class="btn o" href="${esc(it.link)}" target="_blank" rel="noopener">Open on ${ln(it.link)}</a>`:""}${k==="jobs"?`<a class="btn" href="mailto:${esc(C.email)}?subject=${encodeURIComponent("Application: "+it.title)}">Apply</a>`:""}</div></div>`).join("")};
+fetch(K.url+"/rest/v1/items?select=*&order=sort.asc,created_at.desc",{headers:{apikey:K.key,Authorization:"Bearer "+K.key}}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(rows=>{const L={},ppl=[];Object.keys(LC).forEach(k=>L[k]=[]);
+rows.forEach(r=>{if(r.section==="people")ppl.push({name:r.title,role:r.body||"",photo:r.image_url||""});else if(L[r.section])L[r.section].push({title:r.title,date:r.date_text||"",text:r.body||"",img:r.image_url||"",file:r.file_url?{url:r.file_url,name:r.file_name||""}:null,link:r.link_url||""})});
+S.lists=L;if(ppl.length)S.people=ppl;route()}).catch(()=>{});
+})();
+</script>
+</body></html>
