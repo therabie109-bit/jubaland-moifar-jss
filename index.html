@@ -121,6 +121,10 @@ const ORG=S.org||(S.org={comm:["National Identification & Registration Authority
 ["Stabilization",["Community Awareness Officer","Research Officer"]]]});
 ORG.depts=ORG.depts.map(d=>Array.isArray(d)?d:[d.name,d.officers||[]]);let EDIT=false,TMP={};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const safeUrl=u=>{try{const x=new URL(String(u||"").trim(),location.href);return/^https?:$/.test(x.protocol)?String(u).trim():""}catch(e){return""}};
+ORG.comm=ORG.comm.map(esc);ORG.depts=ORG.depts.map(d=>[esc(d[0]),d[1].map(esc)]);
+(S.people||[]).forEach(p=>p.photo=safeUrl(p.photo));
+Object.values(S.lists||{}).forEach(L=>(L||[]).forEach(it=>{it.img=safeUrl(it.img);it.link=safeUrl(it.link);if(it.file){it.file=typeof it.file==="string"?{url:safeUrl(it.file),name:it.file.split("/").pop()}:{name:it.file.name||"",url:safeUrl(it.file.url)};if(!it.file.url)it.file=null}}));
 const av=p=>p.photo?`<img class="av pf" src="${esc(p.photo)}" alt="${esc(p.name)}" style="object-position:${esc(p.pos||"50% 15%")}">`:`<div class="av">👤</div>`;
 const bx=(h,s)=>`<div class="card" style="width:min(340px,100%);text-align:center"><h3>${h}</h3>${s?`<p>${s}</p>`:""}</div>`;
 const dc=d=>`<div class="card"><h3>${d[0]}</h3><ul class="ul">${d[1].map(o=>`<li>${o}</li>`).join("")}</ul></div>`;
@@ -144,7 +148,7 @@ const mk=a=>a.map(x=>({title:x[0],date:x[1],text:""}));
 S.lists=S.lists||{news:NEWS.map(n=>({title:n[0],date:n[1],text:n[2]})),constitution:mk([["Jubaland State Constitution","Document"]]),bills:mk([["Sample Bill 1","Draft"],["Sample Bill 2","Enacted"]]),policies:mk([["NGO Registration Guidelines","Policy"],["Reconciliation Framework","Policy"]]),press:mk([["Statement on reconciliation efforts","Oct 2026"],["Announcement: NGO registration portal","Aug 2026"]]),pub:mk([["Annual Report 2025","Report"],["Reconciliation Strategy","Strategy"],["NGO Directory","Directory"]]),photos:[],jobs:[]};
 document.querySelector(".notice").lastChild.textContent=S.txt.notice;
 const LC={news:[1,1],photos:[1,0],press:[0,1],pub:[0,1],bills:[0,1],policies:[0,1],constitution:[0,1],jobs:[0,1]};
-const syncNews=()=>{NEWS.length=0;S.lists.news.slice(0,3).forEach(n=>NEWS.push([n.title,n.date,n.text]))};
+const syncNews=()=>{NEWS.length=0;S.lists.news.slice(0,3).forEach(n=>NEWS.push([esc(n.title),esc(n.date),esc(n.text)]))};
 const T=h=>h.split(DM).join(esc(S.txt.mission)).split(DV).join(esc(S.txt.vision)).split(DD).join(esc(S.txt.mandate));
 ["home","about"].forEach(k=>{const o=P[k].h;P[k].h=()=>{syncNews();return T(o())}});
 function lpage(k){const L=S.lists[k];let h=EDIT?`<p><button class="btn" onclick="editI('${k}',-1)">+ Add new</button></p><div id="ed"></div>`:"";
@@ -206,7 +210,7 @@ if(!L.length)return h+"<p>Nothing has been published here yet.</p>";
 if(k==="photos")return h+`<div class="grid">${L.map((it,i)=>`<div class="card" style="padding:0"><img src="${esc(it.img)}" alt="${esc(it.title)}" style="width:100%;aspect-ratio:4/3;object-fit:cover;cursor:pointer;display:block" onclick="lbI(${i})"><div style="padding:12px"><b>${esc(it.title)}</b><div class="meta">${esc(it.date||"")}</div></div></div>`).join("")}</div>`;
 return h+L.map(it=>`<div class="row" style="align-items:flex-start"><div style="display:flex;gap:16px;flex:1;flex-wrap:wrap">${it.img?`<img src="${esc(it.img)}" alt="" style="width:160px;height:110px;object-fit:cover">`:""}<div style="flex:1;min-width:220px"><b>${esc(it.title)}</b><div class="meta">${esc(it.date||"")}</div><p style="white-space:pre-line;margin:6px 0 0">${esc(it.text||"")}</p>${emb(it.link)}</div></div><div style="display:grid;gap:8px">${it.file?`<a class="btn o" href="${esc(it.file.url)}" target="_blank" rel="noopener">Download</a>`:""}${it.link?`<a class="btn o" href="${esc(it.link)}" target="_blank" rel="noopener">Open on ${ln(it.link)}</a>`:""}${k==="jobs"?`<a class="btn" href="mailto:${esc(C.email)}?subject=${encodeURIComponent("Application: "+it.title)}">Apply</a>`:""}</div></div>`).join("")};
 fetch(K.url+"/rest/v1/items?select=*&order=sort.asc,created_at.desc",{headers:{apikey:K.key,Authorization:"Bearer "+K.key}}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(rows=>{const L={},ppl=[];Object.keys(LC).forEach(k=>L[k]=[]);
-rows.forEach(r=>{if(r.section==="people")ppl.push({name:r.title,role:r.body||"",photo:r.image_url||""});else if(L[r.section])L[r.section].push({title:r.title,date:r.date_text||"",text:r.body||"",img:r.image_url||"",file:r.file_url?{url:r.file_url,name:r.file_name||""}:null,link:r.link_url||""})});
+rows.forEach(r=>{if(r.section==="people")ppl.push({name:r.title,role:r.body||"",photo:safeUrl(r.image_url)});else if(L[r.section])L[r.section].push({title:r.title,date:r.date_text||"",text:r.body||"",img:safeUrl(r.image_url),file:safeUrl(r.file_url)?{url:safeUrl(r.file_url),name:r.file_name||""}:null,link:safeUrl(r.link_url)})});
 S.lists=L;if(ppl.length)S.people=ppl;route()}).catch(()=>{});
 })();
 </script>
