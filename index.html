@@ -80,7 +80,7 @@ header.h{background:linear-gradient(180deg,#fff 0%,#eaf3fc 100%);border-bottom:3
 @keyframes pl{to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.pk{animation:none;flex-wrap:wrap;width:auto;justify-content:center}}
 @media(max-width:860px){.hr{width:100%;justify-content:space-between}.brand img{width:72px;height:72px}.brand .nm b{font-size:17px}.brand .nm em{display:none}}
-body.home .hero{display:none}body.home main{max-width:none;padding:0 0 50px}.ct{max-width:1180px;margin:0 auto;padding:0 24px}
+.ct{margin:0}
 .hb{background:linear-gradient(135deg,#0b3d78,#0e5a9c 60%,#1a6fb8);color:#fff;padding:44px 24px 100px}
 .hw{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:36px;align-items:center}
 .hb .ey{display:inline-block;border:1px solid #c9a22788;color:#f0d77a;background:#c9a22722;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
@@ -88,7 +88,7 @@ body.home .hero{display:none}body.home main{max-width:none;padding:0 0 50px}.ct{
 .hs{display:flex;align-items:center;background:#fff;border-radius:10px;padding:6px;max-width:520px;margin-top:22px;box-shadow:0 8px 24px #0004}.hs input{border:0;flex:1;margin:0;background:transparent;color:#1d2b3a;padding:10px 12px;outline:0}
 .hs button{display:flex;align-items:center;gap:8px;background:var(--gold);color:#fff;border:0;border-radius:8px;padding:10px 20px;font:inherit;font-weight:700;cursor:pointer}
 .hb .sl{height:380px;box-shadow:0 12px 32px #0006}
-.qc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:-60px;position:relative;z-index:2}
+.qc{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:6px}
 .qc a{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:22px;color:inherit;box-shadow:0 8px 24px #0b3d7822;transition:.2s}.qc a:hover{transform:translateY(-3px)}
 .qc h3{margin:12px 0 4px;color:var(--navy)}.qc p{margin:0 0 12px;color:var(--mut);font-size:14px}.qc em{font-style:normal;font-weight:700;color:var(--blue);font-size:14px}
 .ab{display:grid;grid-template-columns:1fr 1.5fr;gap:30px;margin-top:56px;align-items:start}.am{display:grid;grid-template-columns:1fr 1fr;gap:22px}
@@ -289,9 +289,7 @@ const slider=()=>{const N=(S.lists.news||[]).slice(0,5),sl=N.length?N:[{title:"W
 return`<div class="sl" id="sl">${sl.map((n,i)=>`<a class="sd${i?"":" on"}" href="#news" style="${n.img?`background-image:url('${esc(n.img).replace(/'/g,"%27")}')`:""}"><span class="cap"><b>${esc(n.title)}</b><small>${esc(n.date||"")}</small></span></a>`).join("")}<button class="ar l" onclick="go(-1,1)" aria-label="Previous">‹</button><button class="ar r" onclick="go(1,1)" aria-label="Next">›</button><div class="dots">${sl.map((_,i)=>`<i class="${i?"":"on"}" onclick="go(${i})"></i>`).join("")}</div></div>`};
 const home2=()=>{SI=0;const T0=S.txt||{},ppl=(S.people||[]).slice(0,4),N=(S.lists.news||[]).slice(0,3),tel=String(C.phone||"").replace(/[^\d+]/g,"");
 const qk=[["📝","NGO Registration","Apply or renew online.","ngo"],["💼","Jobs","Vacancies at the ministry","jobs"],["🌐","E-MOIFAR Services","Online services","emoifar"],["💬","Citizen Tips","Send feedback or report an issue.","tips"]];
-return`<section class="hb"><div class="hw"><div><span class="ey">Jubaland State of Somalia</span><h1>${t("home","Welcome")}</h1><p>${esc(P.home.l)}</p>
-<form class="hs" onsubmit="document.getElementById('q').value=document.getElementById('q2').value;return doSearch(event)"><input id="q2" placeholder="Search…" aria-label="Search"><button aria-label="Search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg></button></form></div><div>${slider()}</div></div></section>
-<div class="ct"><div class="qc">${qk.map(q=>`<a href="#${q[3]}"><div class="ic">${q[0]}</div><h3>${q[1]}</h3><p>${q[2]}</p><em>Open →</em></a>`).join("")}</div>
+return hero()+`<div class="ct"><div class="qc">${qk.map(q=>`<a href="#${q[3]}"><div class="ic">${q[0]}</div><h3>${q[1]}</h3><p>${q[2]}</p><em>Open →</em></a>`).join("")}</div>
 <section class="ab"><div><h2 class="s">About the Ministry</h2><p>${esc(T0.mandate||"")}</p><a class="btn o" href="#about">Read more</a></div><div class="am"><div class="mv d"><h3>Mission</h3><p>${esc(T0.mission||"")}</p></div><div class="mv l"><h3>Vision</h3><p>${esc(T0.vision||"")}</p></div></div></section>
 <h2 class="s">Leadership</h2><div class="lg">${ppl.map(p=>`<a class="lc" href="#leadership"><div class="ph0">${p.photo?`<img src="${esc(p.photo)}" alt="${esc(p.name)}">`:"<span>👤</span>"}<span class="bd" style="font-size:11px;opacity:1">${esc(p.role)}</span></div><div class="tx"><b>${esc(p.name)}</b><em>View profile →</em></div></a>`).join("")}</div>
 <div class="sh"><h2 class="s">Departments</h2><a class="btn o" href="#departments">View all →</a></div><div class="dg">${ORG.depts.map((d,i)=>`<a class="dc" href="#structure"><span class="dn">${String(i+1).padStart(2,"0")}</span><div class="di">🏢</div><h3>${d[0]}</h3><p>${d[1].length} section officers</p><em>Learn more →</em></a>`).join("")}</div>
