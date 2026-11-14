@@ -1,44 +1,74 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="robots" content="noindex,nofollow"><title>Admin – Jubaland MoIFAR</title>
 <style>*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f4f7fb;color:#1d2b3a}header{background:#0e5a9c;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}main{max-width:900px;margin:0 auto;padding:20px}
-.box{background:#fff;border:1px solid #dde5ee;border-top:4px solid #0e5a9c;padding:20px;margin-bottom:20px}input,textarea,select{width:100%;padding:10px;border:1px solid #c9d5e2;border-radius:3px;font:inherit;margin:4px 0 12px}
-button{background:#0e5a9c;color:#fff;border:0;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;border-radius:3px}button.o{background:#fff;color:#0e5a9c;border:1px solid #0e5a9c}button.d{background:#b42318}
+.box{background:#fff;border:1px solid #dde5ee;border-top:4px solid #0e5a9c;padding:20px;margin-bottom:20px}label{font-weight:600;font-size:14px;display:block}input,textarea,select{width:100%;padding:10px;border:1px solid #c9d5e2;border-radius:3px;font:inherit;margin:4px 0 12px;background:#fff}
+button{background:#0e5a9c;color:#fff;border:0;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer;border-radius:3px}button.o{background:#fff;color:#0e5a9c;border:1px solid #0e5a9c}button.d{background:#b42318}button:disabled{opacity:.6}
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}.tabs button{background:#fff;color:#0e5a9c;border:1px solid #0e5a9c}.tabs .a{background:#0e5a9c;color:#fff}
-.it{display:flex;gap:12px;align-items:center;border-bottom:1px solid #eef2f6;padding:10px 0;flex-wrap:wrap}.it img{width:64px;height:48px;object-fit:cover}.it div{flex:1;min-width:160px}small{color:#5d6b7a}#msg{color:#14532d;font-weight:600}.err{color:#b42318}</style></head><body>
+.it{display:flex;gap:12px;align-items:center;border-bottom:1px solid #eef2f6;padding:10px 0;flex-wrap:wrap}.it img{width:64px;height:48px;object-fit:cover}.it div{flex:1;min-width:160px}small{color:#5d6b7a;display:block;font-weight:400;margin-top:-6px;margin-bottom:6px}.it small{margin:2px 0 0}
+.rm{font-weight:400;font-size:13px;margin:-6px 0 10px}.rm input{width:auto;margin:0 6px 0 0}#msg{color:#14532d;font-weight:600}.err{color:#b42318}.sec{background:#eef4fb;border-left:4px solid #c9a227;padding:8px 12px;margin:10px 0 14px;font-weight:700;color:#0b3d78}</style></head><body>
 <header><b>Jubaland MoIFAR – Admin</b><span><a href="index.html" style="color:#fff;margin-right:14px">View website</a><button id="out" class="o" style="display:none">Sign out</button></span></header>
 <main><div id="login" class="box" style="display:none;max-width:420px;margin:40px auto"><h2>Admin login</h2><form id="lf"><label>Email<input id="em" type="email" autocomplete="username" required></label><label>Password<input id="pw" type="password" autocomplete="current-password" required></label><button>Sign in</button><p id="le" class="err"></p></form></div>
-<div id="app" style="display:none"><div class="tabs" id="tabs"></div><div class="box"><h3 id="ft">Add new</h3><form id="f"><label>Title / name *<input id="t" required></label><label>Date, status or closing date<input id="d" placeholder="e.g. 5 Nov 2026"></label><label id="bl">Description<textarea id="b" rows="4"></textarea></label><label>Social media or web link (Facebook, YouTube, X, TikTok, Instagram…)<input id="l" type="url" placeholder="https://"></label><label>Order (small number shows first; leave 0 for newest first)<input id="s" type="number" value="0"></label><label>Image<input id="i" type="file" accept="image/*"></label><label id="rim" style="display:none"><input id="ri" type="checkbox" style="width:auto"> Remove current image</label><label>Document (PDF, Word, Excel…)<input id="fl" type="file"></label><label id="rfl" style="display:none"><input id="rf" type="checkbox" style="width:auto"> Remove current document</label><button id="sv">Save</button> <button type="button" class="o" id="cn" style="display:none">Cancel edit</button><p id="msg"></p></form></div>
+<div id="app" style="display:none"><div class="tabs" id="tabs"></div><div class="box"><h3 id="ft">Add new</h3><form id="f"><div id="fields"></div><button id="sv">Save</button> <button type="button" class="o" id="cn" style="display:none">Cancel edit</button><p id="msg"></p></form></div>
 <div class="box"><h3 id="lt">Items</h3><div id="list"></div></div></div></main>
 <script src="supabase.js"></script><script src="config.js"></script>
 <script>
-const K=window.CMS||{},$=id=>document.getElementById(id),esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const K=window.CMS||{},$=id=>document.getElementById(id),esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 if(!K.url||!K.key){document.querySelector("main").innerHTML="<p class='err'>config.js is not filled in yet.</p>";throw new Error("no config")}
-const sb=supabase.createClient(K.url,K.key),SEC=[["news","News"],["activities","Activities / social media"],["photos","Photos"],["jobs","Jobs"],["press","Press releases"],["pub","Publications"],["bills","Bills"],["policies","Policies"],["constitution","Constitution"],["people","Leadership"],["partners","Partners (logos)"],["social","Social media links"]];
+const sb=supabase.createClient(K.url,K.key);
+/* ---- what each section asks for. k starting with x_ is stored in the "extra" data ---- */
+const T=(k,l,t,o)=>Object.assign({k,l,t},o||{}),title=l=>T("title",l,"text",{req:1}),date=l=>T("date_text",l,"date"),body=(l,r)=>T("body",l,"area",{rows:r||4}),img=(l,rq)=>T("image",l,"image",{req:rq}),file=l=>T("file",l,"file"),link=(l,rq)=>T("link_url",l,"url",{req:rq,ph:"https://"}),sec_=l=>T("_",l,"head");
+const DOC="Document (PDF, Word, Excel…)",STAT="Status or date";
+const CFG={
+news:{n:"News",f:[title("Headline"),date("Date"),body("Story",9),img("Picture (shows in the home slider)"),link("Source or social media link (optional)"),file("Attachment (optional)")]},
+activities:{n:"Activities / social posts",f:[title("Title"),date("Date"),body("Short description",4),link("Link to the post (Facebook, YouTube, X, TikTok, Instagram…)"),img("Picture (optional)")]},
+photos:{n:"Photos",f:[title("Caption"),date("Date"),img("Photo",1)]},
+jobs:{n:"Jobs",f:[title("Job title"),sec_("About the position"),T("x_dept","Department / unit","text"),T("x_location","Location","text",{ph:"e.g. Kismayo"}),T("x_type","Type of job","select",{o:["Full-time","Part-time","Contract","Internship","Volunteer"]}),T("x_positions","Number of positions","text",{ph:"e.g. 2"}),date("Closing date"),T("x_status","Status","select",{o:["Open","Closed"],h:"The job also closes by itself after its closing date."}),sec_("What people read before applying"),body("About the job (short summary)",5),T("x_duties","Main duties","area",{rows:6,h:"One duty per line."}),T("x_reqs","Requirements (education, experience, skills)","area",{rows:6,h:"One requirement per line."}),T("x_how","How to apply","area",{rows:4,h:"e.g. Send your CV and cover letter to the ministry email before the closing date."}),file("Full vacancy announcement (PDF or Word) – optional")]},
+press:{n:"Press releases",f:[title("Title"),date("Date"),body("Summary",5),file(DOC)]},
+pub:{n:"Publications",f:[title("Title"),date("Date or year"),T("x_kind","Type","select",{o:["Report","Strategy","Directory","Guide","Other"]}),body("Description",4),file(DOC)]},
+bills:{n:"Bills",f:[title("Title"),T("date_text",STAT,"text",{ph:"e.g. Draft, Enacted 2026"}),body("Description",4),file(DOC)]},
+policies:{n:"Policies",f:[title("Title"),T("date_text",STAT,"text"),body("Description",4),file(DOC)]},
+constitution:{n:"Constitution",f:[title("Title"),T("date_text",STAT,"text"),body("Description",4),file(DOC)]},
+people:{n:"Leadership",f:[title("Full name"),T("body","Title / role (e.g. Minister)","text"),img("Photo",0),T("sort","Order on the page (1 = first)","number")]},
+partners:{n:"Partners (logos)",f:[title("Partner name"),img("Logo",1),link("Partner website (optional)")]},
+social:{n:"Social media links",f:[T("title","Platform","select",{o:["Facebook","X","Instagram","YouTube","TikTok"],req:1}),link("Page address",1)]}
+};
 let sec="news",ed=null,rows=[];
-const show=on=>{$("login").style.display=on?"none":"block";$("app").style.display=on?"block":"none";$("out").style.display=on?"":"none";if(on){tabs();load()}};
+const OK=["image/jpeg","image/png","image/webp","image/gif","application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/vnd.ms-powerpoint","application/vnd.openxmlformats-officedocument.presentationml.presentation"];
+const show=on=>{$("login").style.display=on?"none":"block";$("app").style.display=on?"block":"none";$("out").style.display=on?"":"none";if(on){tabs();build();load()}};
 async function gate(){const r0=await sb.auth.getSession(),ss=r0.data.session;if(!ss)return show(false);const r=await sb.from("admins").select("user_id").eq("user_id",ss.user.id).maybeSingle();if(!r.data){await sb.auth.signOut();show(false);$("le").textContent="This account is not an administrator.";return}show(true)}
 gate();
 $("lf").onsubmit=async e=>{e.preventDefault();const r=await sb.auth.signInWithPassword({email:$("em").value,password:$("pw").value});if(r.error)$("le").textContent=r.error.message;else gate()};
 $("out").onclick=async()=>{await sb.auth.signOut();show(false)};
-function tabs(){$("tabs").innerHTML=SEC.map(s=>`<button class="${s[0]===sec?"a":""}" onclick="pick('${s[0]}')">${s[1]}</button>`).join("")}
-function pick(s){sec=s;reset();tabs();load()}
-async function load(){const r=await sb.from("items").select("*").eq("section",sec).order("sort",{ascending:true}).order("created_at",{ascending:false});rows=r.data||[];$("lt").textContent=SEC.find(s=>s[0]===sec)[1]+" ("+rows.length+")";
-$("bl").firstChild.textContent=sec==="people"?"Role / title (e.g. Minister)":"Description";
-$("list").innerHTML=rows.length?rows.map((x,i)=>`<div class="it">${x.image_url?`<img src="${esc(x.image_url)}">`:""}<div><b>${esc(x.title)}</b><br><small>${esc(x.date_text)} ${x.file_name?"📎 "+esc(x.file_name):""} ${x.link_url?"🔗":""}</small></div><button class="o" onclick="edit(${i})">Edit</button><button class="d" onclick="del(${i})">Delete</button></div>`).join(""):"<p>Nothing here yet.</p>"}
-function reset(){ed=null;$("f").reset();$("ft").textContent="Add new";$("cn").style.display=$("rim").style.display=$("rfl").style.display="none";$("msg").textContent=""}
-$("cn").onclick=reset;
-function edit(i){const x=rows[i];ed=x;$("t").value=x.title;$("d").value=x.date_text||"";$("b").value=x.body||"";$("l").value=x.link_url||"";$("s").value=x.sort||0;$("ft").textContent="Edit item";$("cn").style.display="";$("rim").style.display=x.image_url?"":"none";$("rfl").style.display=x.file_url?"":"none";scrollTo(0,0)}
+function tabs(){$("tabs").innerHTML=Object.keys(CFG).map(k=>`<button class="${k===sec?"a":""}" onclick="pick('${k}')">${CFG[k].n}</button>`).join("")}
+function pick(s){sec=s;ed=null;tabs();build();load()}
+function build(){$("ft").textContent="Add new – "+CFG[sec].n;$("cn").style.display="none";$("msg").textContent="";
+$("fields").innerHTML=CFG[sec].f.map(f=>{if(f.t==="head")return`<div class="sec">${f.l}</div>`;const id="f_"+f.k,r=f.req?" *":"";let i;
+if(f.t==="area")i=`<textarea id="${id}" rows="${f.rows||4}"></textarea>`;else if(f.t==="select")i=`<select id="${id}">${f.o.map(o=>`<option>${o}</option>`).join("")}</select>`;
+else if(f.t==="image")i=`<input id="${id}" type="file" accept="image/*">`;else if(f.t==="file")i=`<input id="${id}" type="file">`;
+else i=`<input id="${id}" type="${f.t}"${f.ph?` placeholder="${f.ph}"`:""}>`;
+const rm=(f.t==="image"||f.t==="file")?`<label class="rm" id="rm_${f.k}" style="display:none"><input type="checkbox" id="rc_${f.k}">Remove the current ${f.t==="image"?"picture":"document"}</label>`:"";
+return`<div><label for="${id}">${f.l}${r}</label>${f.h?`<small>${f.h}</small>`:""}${i}${rm}</div>`}).join("")}
+async function load(){const r=await sb.from("items").select("*").eq("section",sec).order("sort",{ascending:true}).order("created_at",{ascending:false});rows=r.data||[];$("lt").textContent=CFG[sec].n+" ("+rows.length+")";
+$("list").innerHTML=rows.length?rows.map((x,i)=>{const e=x.extra||{};return`<div class="it">${x.image_url?`<img src="${esc(x.image_url)}" alt="">`:""}<div><b>${esc(x.title)}</b><small>${esc([x.date_text,e.dept,e.location,e.type,e.status==="Closed"?"CLOSED":"",e.kind].filter(Boolean).join(" · "))} ${x.file_name?"📎 "+esc(x.file_name):""} ${x.link_url?"🔗":""}</small></div><button class="o" onclick="edit(${i})">Edit</button><button class="d" onclick="del(${i})">Delete</button></div>`}).join(""):"<p>Nothing here yet.</p>"}
+function edit(i){const x=rows[i],e=x.extra||{};ed=x;build();$("ft").textContent="Edit – "+CFG[sec].n;$("cn").style.display="";
+CFG[sec].f.forEach(f=>{if(f.t==="head")return;if(f.t==="image"){if(x.image_url)$("rm_"+f.k).style.display="block";return}if(f.t==="file"){if(x.file_url)$("rm_"+f.k).style.display="block";return}
+const v=f.k.startsWith("x_")?e[f.k.slice(2)]:x[f.k];$("f_"+f.k).value=v==null?"":v});scrollTo(0,0)}
+$("cn").onclick=()=>{ed=null;build()};
 const path=u=>u&&u.split("/object/public/uploads/")[1];
-const OK=["image/jpeg","image/png","image/webp","image/gif","application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/vnd.ms-powerpoint","application/vnd.openxmlformats-officedocument.presentationml.presentation"];
-async function up(f){if(f.size>10485760)throw new Error("File is too big (maximum 10 MB): "+f.name);if(!OK.includes(f.type))throw new Error("This file type is not allowed (use PDF, Word, Excel, PowerPoint or JPG/PNG/WebP/GIF): "+f.name);const p=sec+"/"+Date.now()+"-"+f.name.replace(/[^\w.\-]+/g,"_"),r=await sb.storage.from("uploads").upload(p,f);if(r.error)throw r.error;return sb.storage.from("uploads").getPublicUrl(p).data.publicUrl}
+async function up(f){if(f.size>10485760)throw new Error("File is too big (maximum 10 MB): "+f.name);if(!OK.includes(f.type))throw new Error("This file type is not allowed (use PDF, Word, Excel, PowerPoint or JPG/PNG/WebP/GIF): "+f.name);
+const p=sec+"/"+Date.now()+"-"+f.name.replace(/[^\w.\-]+/g,"_"),r=await sb.storage.from("uploads").upload(p,f);if(r.error)throw r.error;return sb.storage.from("uploads").getPublicUrl(p).data.publicUrl}
 async function rm(u){const p=path(u);if(p)await sb.storage.from("uploads").remove([p])}
 $("f").onsubmit=async e=>{e.preventDefault();$("sv").disabled=true;$("msg").className="";$("msg").textContent="Saving…";
-try{const o={section:sec,title:$("t").value.trim(),date_text:$("d").value.trim(),body:$("b").value.trim(),link_url:$("l").value.trim(),sort:+$("s").value||0};
-if(o.link_url&&!/^https?:\/\//i.test(o.link_url))throw new Error("The link must start with https://");let img=ed?ed.image_url:null,fu=ed?ed.file_url:null,fn=ed?ed.file_name:null;
-if($("ri").checked&&img){await rm(img);img=null}if($("rf").checked&&fu){await rm(fu);fu=fn=null}
-if($("i").files[0]){if(img)await rm(img);img=await up($("i").files[0])}
-if($("fl").files[0]){if(fu)await rm(fu);fu=await up($("fl").files[0]);fn=$("fl").files[0].name}
-o.image_url=img;o.file_url=fu;o.file_name=fn;
+try{const o={section:sec,sort:0},ex={};let img=ed?ed.image_url:null,fu=ed?ed.file_url:null,fn=ed?ed.file_name:null,imgF=null,fileF=null;
+for(const f of CFG[sec].f){if(f.t==="head")continue;const el=$("f_"+f.k);
+if(f.t==="image"){imgF=el.files[0]||null;if($("rc_"+f.k)&&$("rc_"+f.k).checked){if(img)await rm(img);img=null}if(f.req&&!imgF&&!img)throw new Error(f.l+" is required");continue}
+if(f.t==="file"){fileF=el.files[0]||null;if($("rc_"+f.k)&&$("rc_"+f.k).checked){if(fu)await rm(fu);fu=fn=null}continue}
+const v=el.value.trim();if(f.req&&!v)throw new Error(f.l+" is required");
+if(f.t==="url"&&v&&!/^https?:\/\//i.test(v))throw new Error("The link must start with https://");
+if(f.k.startsWith("x_")){if(v)ex[f.k.slice(2)]=v}else o[f.k]=f.t==="number"?(+v||0):v}
+if(imgF){if(img)await rm(img);img=await up(imgF)}
+if(fileF){if(fu)await rm(fu);fu=await up(fileF);fn=fileF.name}
+o.extra=ex;o.image_url=img;o.file_url=fu;o.file_name=fn;
 const r=ed?await sb.from("items").update(o).eq("id",ed.id):await sb.from("items").insert(o);if(r.error)throw r.error;
-reset();$("msg").textContent="Saved. The website shows it now.";load()}catch(x){$("msg").className="err";$("msg").textContent="Error: "+(x.message||x)}$("sv").disabled=false};
+ed=null;build();$("msg").textContent="Saved. The website shows it now.";load()}catch(x){$("msg").className="err";$("msg").textContent="Error: "+(x.message||x)}$("sv").disabled=false};
 async function del(i){const x=rows[i];if(!confirm("Delete \""+x.title+"\"?"))return;await rm(x.image_url);await rm(x.file_url);const r=await sb.from("items").delete().eq("id",x.id);if(r.error)alert(r.error.message);load()}
 </script></body></html>
