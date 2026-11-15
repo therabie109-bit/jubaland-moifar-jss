@@ -5,10 +5,12 @@ button{background:#0e5a9c;color:#fff;border:0;padding:10px 18px;font:inherit;fon
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}.tabs button{background:#fff;color:#0e5a9c;border:1px solid #0e5a9c}.tabs .a{background:#0e5a9c;color:#fff}
 .it{display:flex;gap:12px;align-items:center;border-bottom:1px solid #eef2f6;padding:10px 0;flex-wrap:wrap}.it img{width:64px;height:48px;object-fit:cover}.it div{flex:1;min-width:160px}small{color:#5d6b7a;display:block;font-weight:400;margin-top:-6px;margin-bottom:6px}.it small{margin:2px 0 0}
 .rm{font-weight:400;font-size:13px;margin:-6px 0 10px}.rm input{width:auto;margin:0 6px 0 0}#msg{color:#14532d;font-weight:600}.err{color:#b42318}.sec{background:#eef4fb;border-left:4px solid #c9a227;padding:8px 12px;margin:10px 0 14px;font-weight:700;color:#0b3d78}</style></head><body>
-<header><b>Jubaland MoIFAR – Admin</b><span><a href="index.html" style="color:#fff;margin-right:14px">View website</a><button id="out" class="o" style="display:none">Sign out</button></span></header>
-<main><div id="login" class="box" style="display:none;max-width:420px;margin:40px auto"><h2>Admin login</h2><form id="lf"><label>Email<input id="em" type="email" autocomplete="username" required></label><label>Password<input id="pw" type="password" autocomplete="current-password" required></label><button>Sign in</button><p id="le" class="err"></p></form></div>
-<div id="app" style="display:none"><div class="tabs" id="tabs"></div><div class="box"><h3 id="ft">Add new</h3><form id="f"><div id="fields"></div><button id="sv">Save</button> <button type="button" class="o" id="cn" style="display:none">Cancel edit</button><p id="msg"></p></form></div>
-<div class="box"><h3 id="lt">Items</h3><div id="list"></div></div></div></main>
+<header><b>Jubaland MoIFAR – Admin</b><span><small id="who" style="display:inline;color:#fff;margin-right:14px;opacity:.9"></small><a href="index.html" style="color:#fff;margin-right:14px">View website</a><button id="out" class="o" style="display:none">Sign out</button></span></header>
+<main><div id="login" class="box" style="display:none;max-width:420px;margin:40px auto"><div class="tabs" style="margin-bottom:12px"><button type="button" id="tl" class="a">Sign in</button><button type="button" id="tr">Request access</button></div><h2 style="margin-top:0">Admin login</h2><form id="lf"><label>Email<input id="em" type="email" autocomplete="username" required></label><label>Password<input id="pw" type="password" autocomplete="current-password" required></label><button>Sign in</button><p id="le" class="err"></p></form>
+<form id="rf" style="display:none"><label>Full name<input id="rn" maxlength="100" required></label><label>Email<input id="re" type="email" autocomplete="username" required></label><label>Password (at least 12 characters)<input id="rp" type="password" autocomplete="new-password" minlength="12" required></label><label>Repeat the password<input id="rq" type="password" autocomplete="new-password" required></label><button>Request access</button><p id="rm2" class="err"></p><small>You will get an email to confirm your address. The administrator then approves your account and chooses what you can edit.</small></form></div>
+<div id="pending" class="box" style="display:none;max-width:480px;margin:40px auto"><h2>Waiting for approval</h2><p id="pt"></p><button id="po" class="o">Sign out</button></div>
+<div id="app" style="display:none"><div class="tabs" id="tabs"></div><div class="box" id="users" style="display:none"></div><div class="box" id="fbox"><h3 id="ft">Add new</h3><form id="f"><div id="fields"></div><button id="sv">Save</button> <button type="button" class="o" id="cn" style="display:none">Cancel edit</button><p id="msg"></p></form></div>
+<div class="box" id="lbox"><h3 id="lt">Items</h3><div id="list"></div></div></div></main>
 <script src="supabase.js"></script><script src="config.js"></script>
 <script>
 const K=window.CMS||{},$=id=>document.getElementById(id),esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -31,15 +33,44 @@ people:{n:"Leadership",f:[title("Full name"),T("body","Title / role (e.g. Minist
 partners:{n:"Partners (logos)",f:[title("Partner name"),img("Logo",1),link("Partner website (optional)")]},
 social:{n:"Social media links",f:[T("title","Platform","select",{o:["Facebook","X","Instagram","YouTube","TikTok"],req:1}),link("Page address",1)]}
 };
-let sec="news",ed=null,rows=[];
+let sec="news",ed=null,rows=[],ALLOWED=null,PEND=0;
 const OK=["image/jpeg","image/png","image/webp","image/gif","application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/vnd.ms-powerpoint","application/vnd.openxmlformats-officedocument.presentationml.presentation"];
-const show=on=>{$("login").style.display=on?"none":"block";$("app").style.display=on?"block":"none";$("out").style.display=on?"":"none";if(on){tabs();build();load()}};
-async function gate(){const r0=await sb.auth.getSession(),ss=r0.data.session;if(!ss)return show(false);const r=await sb.from("admins").select("user_id").eq("user_id",ss.user.id).maybeSingle();if(!r.data){await sb.auth.signOut();show(false);$("le").textContent="This account is not an administrator.";return}show(true)}
+const show=on=>{$("pending").style.display="none";$("login").style.display=on?"none":"block";$("app").style.display=on?"block":"none";$("out").style.display=on?"":"none";if(on){if(!ALLOWED)countPend();if(ALLOWED&&!ALLOWED.includes(sec))sec=Object.keys(CFG).find(k=>ALLOWED.includes(k));tabs();build();load()}};
+async function gate(){const r0=await sb.auth.getSession(),ss=r0.data.session;if(!ss)return show(false);const r=await sb.from("admins").select("user_id").eq("user_id",ss.user.id).maybeSingle();if(r.data){ALLOWED=null;$("who").textContent="Signed in as administrator";return show(true)}
+const e=await sb.from("editors").select("sections").eq("user_id",ss.user.id).maybeSingle(),sc=e.data&&e.data.sections||[];
+if(!sc.some(k=>CFG[k])){const q=await sb.from("access_requests").select("status").eq("user_id",ss.user.id).maybeSingle(),st=q.data&&q.data.status;
+$("login").style.display="none";$("app").style.display="none";$("pending").style.display="block";$("out").style.display="";
+$("pt").textContent=st==="rejected"?"Your request was not approved. Please contact the administrator.":st==="revoked"?"Your access was removed. Please contact the administrator.":"Your account is waiting for approval by the administrator. Please come back later.";return}
+ALLOWED=sc.filter(k=>CFG[k]);$("who").textContent="Signed in as editor: "+ALLOWED.map(k=>CFG[k].n).join(", ");show(true)}
 gate();
 $("lf").onsubmit=async e=>{e.preventDefault();const r=await sb.auth.signInWithPassword({email:$("em").value,password:$("pw").value});if(r.error)$("le").textContent=r.error.message;else gate()};
-$("out").onclick=async()=>{await sb.auth.signOut();show(false)};
-function tabs(){$("tabs").innerHTML=Object.keys(CFG).map(k=>`<button class="${k===sec?"a":""}" onclick="pick('${k}')">${CFG[k].n}</button>`).join("")}
-function pick(s){sec=s;ed=null;tabs();build();load()}
+$("out").onclick=async()=>{await sb.auth.signOut();show(false)};$("po").onclick=$("out").onclick;
+$("tl").onclick=()=>{$("lf").style.display="";$("rf").style.display="none";$("tl").className="a";$("tr").className=""};
+$("tr").onclick=()=>{$("lf").style.display="none";$("rf").style.display="";$("tr").className="a";$("tl").className=""};
+$("rf").onsubmit=async e=>{e.preventDefault();const m=$("rm2");m.className="err";
+if($("rp").value.length<12){m.textContent="The password must have at least 12 characters.";return}
+if($("rp").value!==$("rq").value){m.textContent="The two passwords do not match.";return}
+const r=await sb.auth.signUp({email:$("re").value.trim(),password:$("rp").value,options:{data:{full_name:$("rn").value.trim()},emailRedirectTo:location.href.split("#")[0]}});
+if(r.error){m.textContent=r.error.message;return}
+m.className="";m.style.color="#14532d";m.textContent="Done. Check your email and click the confirmation link, then sign in here. The administrator must approve your account before you can add anything.";$("rf").reset()};
+function tabs(){$("tabs").innerHTML=Object.keys(CFG).filter(k=>!ALLOWED||ALLOWED.includes(k)).map(k=>`<button class="${k===sec?"a":""}" onclick="pick('${k}')">${CFG[k].n}</button>`).join("")+(ALLOWED?"":`<button class="${sec==="users"?"a":""}" onclick="pick('users')">👥 Users &amp; access${PEND?" ("+PEND+")":""}</button>`)}
+function pick(s){sec=s;ed=null;const u=s==="users";$("users").style.display=u?"block":"none";$("fbox").style.display=$("lbox").style.display=u?"none":"block";tabs();if(u){loadUsers();return}build();load()}
+async function countPend(){const r=await sb.from("access_requests").select("user_id").eq("status","pending");PEND=(r.data||[]).length;tabs()}
+async function loadUsers(){const [a,b]=await Promise.all([sb.from("access_requests").select("*").order("requested_at",{ascending:false}),sb.from("editors").select("*")]);
+const reqs=a.data||[],eds={};(b.data||[]).forEach(e=>eds[e.user_id]=e.sections||[]);PEND=reqs.filter(r=>r.status==="pending").length;tabs();
+const chk=(id,sel)=>Object.keys(CFG).map(k=>`<label class="rm" style="display:inline-block;margin-right:12px"><input type="checkbox" class="c_${id}" value="${k}"${sel.includes(k)?" checked":""}>${CFG[k].n}</label>`).join("");
+const who=r=>`<b>${esc(r.full_name||"(no name)")}</b><small>${esc(r.email)} · ${esc(r.status)} · requested ${esc((r.requested_at||"").slice(0,10))}</small>`;
+const pend=reqs.filter(r=>r.status==="pending"),act=reqs.filter(r=>eds[r.user_id]),oth=reqs.filter(r=>r.status!=="pending"&&!eds[r.user_id]);
+$("users").innerHTML=`<h3>Waiting for approval (${pend.length})</h3>`+(pend.length?pend.map(r=>`<div class="it" style="align-items:flex-start"><div>${who(r)}<div style="margin:8px 0">Allow them to edit:<br>${chk(r.user_id,["news","activities"])}</div><button onclick="approve('${r.user_id}')">Approve</button> <button class="d" onclick="reject('${r.user_id}')">Reject</button></div></div>`).join(""):"<p>No requests waiting.</p>")
++`<h3>People with access (${act.length})</h3>`+(act.length?act.map(r=>`<div class="it" style="align-items:flex-start"><div>${who(r)}<div style="margin:8px 0">${chk(r.user_id,eds[r.user_id])}</div><button onclick="saveAccess('${r.user_id}')">Save changes</button> <button class="d" onclick="revoke('${r.user_id}')">Remove access</button></div></div>`).join(""):"<p>Nobody yet.</p>")
++(oth.length?`<h3>Closed requests (${oth.length})</h3>`+oth.map(r=>`<div class="it" style="align-items:flex-start"><div>${who(r)}<div style="margin:8px 0">${chk(r.user_id,["news","activities"])}</div><button class="o" onclick="approve('${r.user_id}')">Approve now</button></div></div>`).join(""):"")}
+const picked=id=>[...document.querySelectorAll(".c_"+id+":checked")].map(c=>c.value);
+async function setAccess(id,st){const s=picked(id);if(!s.length){alert("Choose at least one section.");return}
+const r=await sb.from("editors").upsert({user_id:id,sections:s});if(r.error){alert(r.error.message);return}
+await sb.from("access_requests").update({status:st,reviewed_at:new Date().toISOString()}).eq("user_id",id);loadUsers()}
+const approve=id=>setAccess(id,"approved"),saveAccess=id=>setAccess(id,"approved");
+async function reject(id){if(!confirm("Reject this request?"))return;await sb.from("editors").delete().eq("user_id",id);await sb.from("access_requests").update({status:"rejected",reviewed_at:new Date().toISOString()}).eq("user_id",id);loadUsers()}
+async function revoke(id){if(!confirm("Remove this person's access?"))return;await sb.from("editors").delete().eq("user_id",id);await sb.from("access_requests").update({status:"revoked",reviewed_at:new Date().toISOString()}).eq("user_id",id);loadUsers()}
 function build(){$("ft").textContent="Add new – "+CFG[sec].n;$("cn").style.display="none";$("msg").textContent="";
 $("fields").innerHTML=CFG[sec].f.map(f=>{if(f.t==="head")return`<div class="sec">${f.l}</div>`;const id="f_"+f.k,r=f.req?" *":"";let i;
 if(f.t==="area")i=`<textarea id="${id}" rows="${f.rows||4}"></textarea>`;else if(f.t==="select")i=`<select id="${id}">${f.o.map(o=>`<option>${o}</option>`).join("")}</select>`;
