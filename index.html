@@ -118,6 +118,12 @@ nav li:hover>a{background:transparent;color:var(--blue)}nav li>a.act{background:
 .jh{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}.job h3{margin:0 0 8px;color:var(--navy);font-size:21px}.job h4{margin:16px 0 6px;color:var(--navy)}.job p{margin:0}.job ul{margin:0;padding-left:20px}
 .tgs{display:flex;gap:8px;flex-wrap:wrap}.tg{display:inline-block;background:#e3eefa;color:var(--blue);border-radius:14px;padding:3px 12px;font-size:12.5px;font-weight:600}
 .jd{text-align:right}.st{display:inline-block;border-radius:14px;padding:3px 14px;font-weight:700;font-size:12.5px;color:#fff}.st.o{background:#1a8f4c}.st.x{background:#8a95a1}.jd small{display:block;margin-top:6px;color:var(--mut)}.ja{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.dr .drs{position:relative;height:240px}.ds{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .6s;text-align:center;display:flex;flex-direction:column;align-items:center;padding-top:14px;color:inherit}.ds.on{opacity:1;pointer-events:auto}
+.ds b{display:block;font-size:17px;color:var(--navy)}.ds small{color:var(--mut);margin-top:2px}
+.dd2{display:flex;justify-content:center;gap:7px;padding:2px 0 4px}.dd2 i{width:9px;height:9px;border-radius:50%;background:#c3d2e3;cursor:pointer}.dd2 i.on{background:var(--blue)}
+.qp .av.pf{width:130px;height:160px}.qp .mc{padding-bottom:12px}.qp .mc+.mc{border-top:1px solid var(--ln)}
+.hp{align-items:stretch}.hp .sl{height:auto;min-height:420px}
+@media(max-width:860px){.hp .sl{height:280px;min-height:0}}
 </style></head><body>
 <div class="top"><div><button onclick="setL('so')" id="lso">SOMALI</button> | <button onclick="setL('en')" id="len" class="on">ENGLISH</button></div>
 <div class="r"><a id="em"></a><span id="hrs"></span><a id="ph"></a><a href="#tips">💬 <span data-i="tips">CITIZEN TIPS</span></a></div></div>
@@ -284,9 +290,9 @@ window.go=(n,rel)=>{const s=document.querySelectorAll("#sl .sd"),d=document.quer
 setInterval(()=>{if(!document.querySelector("#sl:hover"))go(1,1)},5000);
 const hero=()=>{const N=(S.lists.news||[]).slice(0,5),sl=N.length?N:[{title:"Welcome to the Ministry of Interior, Federal Affairs & Reconciliation",date:"Jubaland State of Somalia",img:""}],p=(S.people||[])[0],upd=[...(S.lists.activities||[]).map(x=>["activities","📣",x]),...(S.lists.news||[]).map(x=>["news","📰",x])].slice(0,4);
 return `<div class="hp"><div class="sl" id="sl">${sl.map((n,i)=>`<a class="sd${i?"":" on"}" href="#news" style="${n.img?`background-image:url('${esc(n.img).replace(/'/g,"%27")}')`:""}"><span class="cap"><b>${esc(n.title)}</b><small>${esc(fmtDate(n.date))}</small></span></a>`).join("")}<button class="ar l" onclick="go(-1,1)" aria-label="Previous">‹</button><button class="ar r" onclick="go(1,1)" aria-label="Next">›</button><div class="dots">${sl.map((_,i)=>`<i class="${i?"":"on"}" onclick="go(${i})"></i>`).join("")}</div></div>
-<aside class="qp">${p?`<div class="mc"><div class="pt">${esc((p.role||"").toUpperCase())}</div>${av(p)}<b>${esc(p.name)}</b><a class="btn" href="#leadership">Meet the leadership</a></div>`:""}<h3 class="qh">Latest updates</h3>${upd.length?upd.map(u=>`<a class="ql up" href="#${u[0]}"><span>${u[1]}</span><div><b>${esc(u[2].title)}</b><small>${esc(fmtDate(u[2].date))}</small></div></a>`).join(""):`<p style="padding:0 16px 16px;color:var(--mut)">No updates yet.</p>`}</aside></div>`};
+<aside class="qp">${ldCard()}${drCard()}</aside></div>`};
 window.fmtDate=s=>{s=String(s||"");const m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m)return s;try{return new Date(+m[1],+m[2]-1,+m[3]).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}catch(e){return s}};
-LC.partners=[1,0];LC.social=[0,0];SO.partners="BAHWADAAGTA";
+LC.partners=[1,0];LC.social=[0,0];LC.directors=[1,0];SO.partners="BAHWADAAGTA";
 const partners=()=>{const A=S.lists.partners||[];if(!A.length)return"";
 const tile=x=>{const i=x.img?`<img src="${esc(x.img)}" alt="${esc(x.title)}" loading="lazy">`:esc(x.title);return x.link?`<a class="pt2" href="${esc(x.link)}" target="_blank" rel="noopener" title="${esc(x.title)}">${i}</a>`:`<div class="pt2" title="${esc(x.title)}">${i}</div>`};
 const row=(a,rv)=>{let h=a.slice();while(h.length<8)h=h.concat(a);const t=h.map(tile).join("");return`<div class="pw"><div class="pk${rv?" rv":""}">${t}${t}</div></div>`};
@@ -314,6 +320,14 @@ return hero()+`<div class="ct"><div class="qc">${qk.map(q=>`<a href="#${q[3]}"><
 <div class="sh"><h2 class="s">Latest News</h2><a class="btn o" href="#news">View all news →</a></div>${N.length?`<div class="ng">${N.map(n=>`<a class="nc" href="#news"><div class="im" style="${n.img?`background-image:url('${esc(n.img).replace(/'/g,"%27")}')`:""}">${n.img?"":"📰"}</div><div class="tx"><small>${esc(fmtDate(n.date))}</small><b>${esc(n.title)}</b></div></a>`).join("")}</div>`:"<p>Nothing has been published here yet.</p>"}
 ${partners()}
 <div class="cb"><div><h3>${t("contact","Contact Us")}</h3><p>${esc(C.phone)} · ${esc(C.email)}</p></div><div class="bt"><a class="btn" href="tel:${esc(tel)}">Call ${esc(C.phone)}</a><a class="btn o" href="#contact">Send a message</a></div></div></div>`};
+const RC={ld:0,dr:0};
+window.goC=(id,n,rel)=>{const el=document.getElementById(id);if(!el)return;const s=el.querySelectorAll(".ds"),d=el.querySelectorAll(".dd2 i");if(!s.length)return;RC[id]=rel?(RC[id]+n+s.length)%s.length:(n%s.length+s.length)%s.length;s.forEach((e,i)=>e.classList.toggle("on",i===RC[id]));d.forEach((e,i)=>e.classList.toggle("on",i===RC[id]));const lb=el.querySelector(".pt");if(lb)lb.textContent=s[RC[id]].dataset.t||""};
+const tick=id=>{if(!document.querySelector("#"+id+":hover"))goC(id,1,1)};
+setInterval(()=>tick("ld"),5000);setTimeout(()=>setInterval(()=>tick("dr"),5000),2500);
+const rot=(id,sl,btn)=>{if(!sl.length)return"";RC[id]=0;
+return`<div class="mc dr" id="${id}"><div class="pt">${esc(sl[0].t)}</div><div class="drs">${sl.map((d,i)=>`<a class="ds${i?"":" on"}" data-t="${esc(d.t)}" href="${d.href}">${d.img?`<img class="av pf" src="${esc(d.img)}" alt="${esc(d.name)}">`:'<div class="av">👤</div>'}<b>${esc(d.name)}</b><small>${esc(d.sub)}</small></a>`).join("")}</div>${sl.length>1?`<div class="dd2">${sl.map((_,i)=>`<i class="${i?"":"on"}" onclick="goC('${id}',${i})"></i>`).join("")}</div>`:""}${btn}</div>`};
+const ldCard=()=>rot("ld",(S.people||[]).slice(0,4).map(p=>({t:String(p.role||"").toUpperCase(),img:p.photo,name:p.name,sub:"",href:"#leadership"})),'<a class="btn" href="#leadership">Meet the leadership</a>');
+const drCard=()=>rot("dr",(S.lists.directors||[]).map(d=>({t:"DEPARTMENT DIRECTOR",img:d.img,name:d.title,sub:d.text||"",href:"#departments"})),'<a class="btn o" href="#departments">View all departments</a>');
 const oh=P.home.h;P.home.h=home2;
 NAV.length=0;NAV.push(["home","Home"],["about","About",[["about","About the Ministry"],["leadership","Leadership"],["contact","Contact"]]],["departments","Departments",[["departments","Departments"],["structure","Organizational Structure"]]],["emoifar","E-MOIFAR",[["emoifar","E-MOIFAR Services"],["ngo","NGO Registration"],["tips","Citizen Tips"]]],["news","News",[["news","News"],...(P.activities?[["activities","Activities"]]:[]),["photos","Photos"],["press","Press Releases"],["pub","Publications"]]],["leg","Legislation",[["constitution","Jubaland Constitution"],["bills","Bills"],["policies","Policies"],["elections","Elections"],["voter","Voter Information"]]]);const IC2={home:"🏠",min:"🏛",ngo:"🤝",leg:"⚖",el:"🗳",media:"📢",pub:"📚",jobs:"💼",emoifar:"🌐",admin:"⚙"};
 buildNav=function(r){document.getElementById("menu").innerHTML=NAV.map(n=>{const k=n[0],tg=n[2]?n[2][0][0]:(P[k]?k:"about"),href=k==="home"||k==="ngo"||k==="pub"||k==="jobs"||k==="emoifar"?k:tg,act=k===r||(n[2]||[]).some(s=>s[0]===r);return`<li><a href="#${href}" class="${act?"act":""}">${t(k,n[1])}</a>${n[2]?`<div class="dd">${n[2].map(s=>`<a href="#${s[0]}">${s[1]}</a>`).join("")}</div>`:""}</li>`}).join("")};
