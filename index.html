@@ -124,6 +124,14 @@ nav li:hover>a{background:transparent;color:var(--blue)}nav li>a.act{background:
 .qp .av.pf{width:130px;height:160px}.qp .mc{padding-bottom:12px}.qp .mc+.mc{border-top:1px solid var(--ln)}
 .hp{align-items:stretch}.hp .sl{height:auto;min-height:420px}
 @media(max-width:860px){.hp .sl{height:280px;min-height:0}}
+.mc.dr{padding-bottom:0;overflow:hidden}
+.dr .drs{height:280px;overflow:hidden;background:linear-gradient(160deg,#0b3d78,#1a6fb8)}
+.dr .ds{display:block;padding:0}
+.dr .ds img.av,.dr .ds div.av{position:absolute;inset:0;width:100%;height:100%;max-width:none;margin:0;border-radius:0;object-fit:cover;object-position:50% 18%;line-height:280px;font-size:84px;color:#ffffff88}
+.dr .cp{position:absolute;left:0;right:0;bottom:0;padding:54px 16px 34px;background:linear-gradient(transparent,#000000b8);color:#fff;text-align:center}
+.dr .cp b{display:block;color:#fff;font-size:20px;text-shadow:0 1px 3px #0008}.dr .cp small{color:#e8eef6;font-size:14px;margin:2px 0 0}
+.dr .dd2{position:absolute;left:0;right:0;bottom:12px;z-index:3;padding:0}.dr .dd2 i{background:#ffffff80}.dr .dd2 i.on{background:#fff}
+.dr>.btn{display:block;margin:10px 14px 14px;text-align:center}
 </style></head><body>
 <div class="top"><div><button onclick="setL('so')" id="lso">SOMALI</button> | <button onclick="setL('en')" id="len" class="on">ENGLISH</button></div>
 <div class="r"><a id="em"></a><span id="hrs"></span><a id="ph"></a><a href="#tips">💬 <span data-i="tips">CITIZEN TIPS</span></a></div></div>
@@ -325,7 +333,7 @@ window.goC=(id,n,rel)=>{const el=document.getElementById(id);if(!el)return;const
 const tick=id=>{if(!document.querySelector("#"+id+":hover"))goC(id,1,1)};
 setInterval(()=>tick("ld"),5000);setTimeout(()=>setInterval(()=>tick("dr"),5000),2500);
 const rot=(id,sl,btn)=>{if(!sl.length)return"";RC[id]=0;
-return`<div class="mc dr" id="${id}"><div class="pt">${esc(sl[0].t)}</div><div class="drs">${sl.map((d,i)=>`<a class="ds${i?"":" on"}" data-t="${esc(d.t)}" href="${d.href}">${d.img?`<img class="av pf" src="${esc(d.img)}" alt="${esc(d.name)}">`:'<div class="av">👤</div>'}<b>${esc(d.name)}</b><small>${esc(d.sub)}</small></a>`).join("")}</div>${sl.length>1?`<div class="dd2">${sl.map((_,i)=>`<i class="${i?"":"on"}" onclick="goC('${id}',${i})"></i>`).join("")}</div>`:""}${btn}</div>`};
+return`<div class="mc dr" id="${id}"><div class="pt">${esc(sl[0].t)}</div><div class="drs">${sl.map((d,i)=>`<a class="ds${i?"":" on"}" data-t="${esc(d.t)}" href="${d.href}">${d.img?`<img class="av pf" src="${esc(d.img)}" alt="${esc(d.name)}">`:'<div class="av">👤</div>'}<span class="cp"><b>${esc(d.name)}</b><small>${esc(d.sub)}</small></span></a>`).join("")}${sl.length>1?`<div class="dd2">${sl.map((_,i)=>`<i class="${i?"":"on"}" onclick="goC('${id}',${i})"></i>`).join("")}</div>`:""}</div>${btn}</div>`};
 const ldCard=()=>rot("ld",(S.people||[]).slice(0,4).map(p=>({t:String(p.role||"").toUpperCase(),img:p.photo,name:p.name,sub:"",href:"#leadership"})),'<a class="btn" href="#leadership">Meet the leadership</a>');
 const drCard=()=>rot("dr",(S.lists.directors||[]).map(d=>({t:"DEPARTMENT DIRECTOR",img:d.img,name:d.title,sub:d.text||"",href:"#departments"})),'<a class="btn o" href="#departments">View all departments</a>');
 const oh=P.home.h;P.home.h=home2;
