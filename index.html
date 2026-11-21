@@ -132,6 +132,40 @@ nav li:hover>a{background:transparent;color:var(--blue)}nav li>a.act{background:
 .dr .cp b{display:block;color:#fff;font-size:20px;text-shadow:0 1px 3px #0008}.dr .cp small{color:#e8eef6;font-size:14px;margin:2px 0 0}
 .dr .dd2{position:absolute;left:0;right:0;bottom:12px;z-index:3;padding:0}.dr .dd2 i{background:#ffffff80}.dr .dd2 i.on{background:#fff}
 .dr>.btn{display:block;margin:10px 14px 14px;text-align:center}
+
+@media(max-width:860px){
+.top{flex-wrap:nowrap;justify-content:space-between;align-items:center;padding:7px 14px;font-size:13px;gap:10px}
+.top .r{flex-wrap:nowrap;gap:14px;align-items:center}#hrs{display:none}
+#em,#ph{font-size:0;line-height:1}#em:before{content:"✉";font-size:18px}#ph:before{content:"📞";font-size:18px}
+header.h{padding:10px 14px;gap:10px}
+.brand{gap:10px}.brand img{width:58px;height:58px;border-width:2px;box-shadow:0 0 0 2px var(--gold),0 3px 10px #0b3d7833}
+.brand .nm{padding-left:10px;border-left-width:2px}.brand .nm small{font-size:10px;letter-spacing:1.6px}.brand .nm b{font-size:14px;letter-spacing:.2px;line-height:1.2}
+.hr{gap:10px}.soc{gap:6px}.soc a,.soc span{width:30px;height:30px}.soc svg{width:15px;height:15px}
+.sbox input{width:112px;height:34px;font-size:13px}.sbox input:focus{width:150px}.sbox button{width:28px;height:28px}
+.nw{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:7px 12px}
+#burger{width:auto;border-radius:20px;padding:8px 18px;font-size:14px}
+.nb{margin:0;padding:8px 22px;border-radius:20px;font-size:14px}
+nav ul{order:3;width:100%;margin-top:6px;border-top:1px solid var(--ln)}
+nav li>a{padding:13px 14px;border-bottom:1px solid var(--ln);border-bottom-color:var(--ln);font-size:15px}
+nav li>a.act{background:#f4f8fd;border-left:3px solid var(--gold);border-bottom-color:var(--ln)}
+.hd>a:after{content:"▾";float:right;color:var(--blue)}.hd.sub>a:after{content:"▴"}
+nav .dd{display:none;position:static;box-shadow:none;border:0;background:#f4f8fd;min-width:0}nav li.sub .dd{display:block}
+nav .dd a{color:var(--navy);padding:11px 14px 11px 30px;border-bottom:1px solid var(--ln);font-size:14.5px}
+.hero{padding:22px 16px 18px}.hero h1{font-size:28px;margin:6px 0 8px}.hero h1:after{margin-top:10px;width:64px}.hero p{font-size:15px}
+body.home .hero{padding:14px 16px 12px}body.home .hero .crumb,body.home .hero p{display:none}body.home .hero h1{font-size:24px;margin:0}body.home .hero h1:after{display:none}
+main{padding:16px 14px 34px}
+.hp{gap:14px;margin-bottom:20px}.hp .sl{height:240px}.cap{padding:14px 52px 34px}.cap b{font-size:16px}
+.dr .drs{height:250px}
+.qc{grid-template-columns:1fr 1fr;gap:10px;margin-top:2px}.qc a{padding:14px}.qc p{display:none}.qc h3{font-size:15px;margin:8px 0 6px}.qc em{font-size:13px}.ic{width:42px;height:42px;font-size:20px}
+.ab{margin-top:26px;gap:16px}.mv{min-height:0;padding:20px}
+h2.s{font-size:19px;margin:26px 0 14px}
+.lg{gap:14px}.dg{gap:10px}.dc{padding:16px}.dc h3{font-size:16px}.dc em{display:none}
+.ng{gap:14px}.nc .im{height:150px}
+.pt2{width:130px;height:62px;margin:0 10px}.pw{padding:10px 0}
+.cb{padding:20px;margin-top:28px}.cb h3{font-size:20px}.cb .bt{width:100%}.cb .btn{flex:1;text-align:center}
+footer{padding:0 16px 14px;font-size:13px}.fl{padding-top:20px}.fl img{width:64px;height:64px}
+.fc{grid-template-columns:1fr 1fr;gap:16px;margin:18px auto;padding-bottom:16px}.fc>div:first-child{grid-column:1/-1}
+}
 </style></head><body>
 <div class="top"><div><button onclick="setL('so')" id="lso">SOMALI</button> | <button onclick="setL('en')" id="len" class="on">ENGLISH</button></div>
 <div class="r"><a id="em"></a><span id="hrs"></span><a id="ph"></a><a href="#tips">💬 <span data-i="tips">CITIZEN TIPS</span></a></div></div>
@@ -339,6 +373,7 @@ const drCard=()=>rot("dr",(S.lists.directors||[]).map(d=>({t:"DEPARTMENT DIRECTO
 const oh=P.home.h;P.home.h=home2;
 NAV.length=0;NAV.push(["home","Home"],["about","About",[["about","About the Ministry"],["leadership","Leadership"],["contact","Contact"]]],["departments","Departments",[["departments","Departments"],["structure","Organizational Structure"]]],["emoifar","E-MOIFAR",[["emoifar","E-MOIFAR Services"],["ngo","NGO Registration"],["tips","Citizen Tips"]]],["news","News",[["news","News"],...(P.activities?[["activities","Activities"]]:[]),["photos","Photos"],["press","Press Releases"],["pub","Publications"]]],["leg","Legislation",[["constitution","Jubaland Constitution"],["bills","Bills"],["policies","Policies"],["elections","Elections"],["voter","Voter Information"]]]);const IC2={home:"🏠",min:"🏛",ngo:"🤝",leg:"⚖",el:"🗳",media:"📢",pub:"📚",jobs:"💼",emoifar:"🌐",admin:"⚙"};
 buildNav=function(r){document.getElementById("menu").innerHTML=NAV.map(n=>{const k=n[0],tg=n[2]?n[2][0][0]:(P[k]?k:"about"),href=k==="home"||k==="ngo"||k==="pub"||k==="jobs"||k==="emoifar"?k:tg,act=k===r||(n[2]||[]).some(s=>s[0]===r);return`<li><a href="#${href}" class="${act?"act":""}">${t(k,n[1])}</a>${n[2]?`<div class="dd">${n[2].map(s=>`<a href="#${s[0]}">${s[1]}</a>`).join("")}</div>`:""}</li>`}).join("")};
-const _bn=buildNav;buildNav=function(r){_bn(r);renderSoc();document.body.classList.toggle("home",r==="home")};renderSoc();route();})();
+const _bn=buildNav;buildNav=function(r){_bn(r);document.querySelectorAll("#menu>li").forEach(li=>{if(li.querySelector(".dd"))li.classList.add("hd")});renderSoc();document.body.classList.toggle("home",r==="home")};document.getElementById("menu").addEventListener("click",e=>{const a=e.target.closest("#menu>li>a");if(!a||!window.matchMedia||!matchMedia("(max-width:860px)").matches)return;const li=a.parentElement;if(!li.classList.contains("hd"))return;e.preventDefault();const was=li.classList.contains("sub");document.querySelectorAll("#menu>li.sub").forEach(x=>x.classList.remove("sub"));if(!was)li.classList.add("sub")});
+renderSoc();route();})();
 </script>
 </body></html>
