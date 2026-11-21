@@ -166,6 +166,7 @@ h2.s{font-size:19px;margin:26px 0 14px}
 footer{padding:0 16px 14px;font-size:13px}.fl{padding-top:20px}.fl img{width:64px;height:64px}
 .fc{grid-template-columns:1fr 1fr;gap:16px;margin:18px auto;padding-bottom:16px}.fc>div:first-child{grid-column:1/-1}
 }
+body.home .hero{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style></head><body>
 <div class="top"><div><button onclick="setL('so')" id="lso">SOMALI</button> | <button onclick="setL('en')" id="len" class="on">ENGLISH</button></div>
 <div class="r"><a id="em"></a><span id="hrs"></span><a id="ph"></a><a href="#tips">💬 <span data-i="tips">CITIZEN TIPS</span></a></div></div>
@@ -374,6 +375,7 @@ const oh=P.home.h;P.home.h=home2;
 NAV.length=0;NAV.push(["home","Home"],["about","About",[["about","About the Ministry"],["leadership","Leadership"],["contact","Contact"]]],["departments","Departments",[["departments","Departments"],["structure","Organizational Structure"]]],["emoifar","E-MOIFAR",[["emoifar","E-MOIFAR Services"],["ngo","NGO Registration"],["tips","Citizen Tips"]]],["news","News",[["news","News"],...(P.activities?[["activities","Activities"]]:[]),["photos","Photos"],["press","Press Releases"],["pub","Publications"]]],["leg","Legislation",[["constitution","Jubaland Constitution"],["bills","Bills"],["policies","Policies"],["elections","Elections"],["voter","Voter Information"]]]);const IC2={home:"🏠",min:"🏛",ngo:"🤝",leg:"⚖",el:"🗳",media:"📢",pub:"📚",jobs:"💼",emoifar:"🌐",admin:"⚙"};
 buildNav=function(r){document.getElementById("menu").innerHTML=NAV.map(n=>{const k=n[0],tg=n[2]?n[2][0][0]:(P[k]?k:"about"),href=k==="home"||k==="ngo"||k==="pub"||k==="jobs"||k==="emoifar"?k:tg,act=k===r||(n[2]||[]).some(s=>s[0]===r);return`<li><a href="#${href}" class="${act?"act":""}">${t(k,n[1])}</a>${n[2]?`<div class="dd">${n[2].map(s=>`<a href="#${s[0]}">${s[1]}</a>`).join("")}</div>`:""}</li>`}).join("")};
 const _bn=buildNav;buildNav=function(r){_bn(r);document.querySelectorAll("#menu>li").forEach(li=>{if(li.querySelector(".dd"))li.classList.add("hd")});renderSoc();document.body.classList.toggle("home",r==="home")};document.getElementById("menu").addEventListener("click",e=>{const a=e.target.closest("#menu>li>a");if(!a||!window.matchMedia||!matchMedia("(max-width:860px)").matches)return;const li=a.parentElement;if(!li.classList.contains("hd"))return;e.preventDefault();const was=li.classList.contains("sub");document.querySelectorAll("#menu>li.sub").forEach(x=>x.classList.remove("sub"));if(!was)li.classList.add("sub")});
+{const n=document.querySelector(".notice");if(n&&!String((S.txt&&S.txt.notice)||"").trim())n.style.display="none"}
 renderSoc();route();})();
 </script>
 </body></html>
